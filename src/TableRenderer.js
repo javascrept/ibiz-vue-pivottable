@@ -1,6 +1,6 @@
 import { PivotData } from './helper/utils'
 import defaultProps from './helper/defaultProps'
-function redColorScaleGenerator (values) {
+function redColorScaleGenerator(values) {
   const min = Math.min.apply(Math, values)
   const max = Math.max.apply(Math, values)
   return x => {
@@ -9,7 +9,7 @@ function redColorScaleGenerator (values) {
     return { backgroundColor: `rgb(255,${nonRed},${nonRed})` }
   }
 }
-function makeRenderer (opts = {}) {
+function makeRenderer(opts = {}) {
   const TableRenderer = {
     name: opts.name,
     mixins: [defaultProps],
@@ -27,7 +27,7 @@ function makeRenderer (opts = {}) {
       }
     },
     methods: {
-      getAttrItemLabel (key) {
+      getAttrItemLabel(key) {
         if (this.columns) {
           let column = this.columns.find((col) => Object.is(col.prop, key))
           if (column) {
@@ -36,7 +36,7 @@ function makeRenderer (opts = {}) {
         }
         return key
       },
-      getItemValue (key, val) {
+      getItemValue(key, val) {
         if (this.columns) {
           let column = this.columns.find((col) => Object.is(col.prop, key))
           if (column && typeof column.render === 'function') {
@@ -45,7 +45,7 @@ function makeRenderer (opts = {}) {
         }
         return val
       },
-      spanSize (arr, i, j) {
+      spanSize(arr, i, j) {
         // helper function for setting row/col-span in pivotTableRenderer
         let x
         if (i !== 0) {
@@ -85,7 +85,7 @@ function makeRenderer (opts = {}) {
         return len
       }
     },
-    render (h) {
+    render(h) {
       const pivotData = new PivotData(this.$props)
       const colAttrs = pivotData.props.cols
       const rowAttrs = pivotData.props.rows
@@ -175,39 +175,39 @@ function makeRenderer (opts = {}) {
                   key: `colAttrs${j}`
                 }
               },
-              [
-                j === 0 && rowAttrs.length !== 0 ? h('th', {
-                  attrs: {
-                    colSpan: rowAttrs.length,
-                    rowSpan: colAttrs.length
-                  }
-                }) : undefined,
-
-                h('th', {
-                  staticClass: ['pvtAxisLabel']
-                }, this.getAttrItemLabel(c)),
-
-                colKeys.map((colKey, i) => {
-                  const x = this.spanSize(colKeys, i, j)
-                  if (x === -1) {
-                    return null
-                  }
-                  return h('th', {
-                    staticClass: ['pvtColLabel'],
+                [
+                  j === 0 && rowAttrs.length !== 0 ? h('th', {
                     attrs: {
-                      key: `colKey${i}`,
-                      colSpan: x,
-                      rowSpan: j === colAttrs.length - 1 && rowAttrs.length !== 0 ? 2 : 1
+                      colSpan: rowAttrs.length,
+                      rowSpan: colAttrs.length
                     }
-                  }, this.getItemValue(c, colKey[j]))
-                }),
-                j === 0 && this.rowTotal ? h('th', {
-                  staticClass: ['pvtTotalLabel'],
-                  attrs: {
-                    rowSpan: colAttrs.length + (rowAttrs.length === 0 ? 0 : 1)
-                  }
-                }, this.locales['Totals'] ? this.locales['Totals'] : 'Totals') : undefined
-              ])
+                  }) : undefined,
+
+                  h('th', {
+                    staticClass: ['pvtAxisLabel']
+                  }, this.getAttrItemLabel(c)),
+
+                  colKeys.map((colKey, i) => {
+                    const x = this.spanSize(colKeys, i, j)
+                    if (x === -1) {
+                      return null
+                    }
+                    return h('th', {
+                      staticClass: ['pvtColLabel'],
+                      attrs: {
+                        key: `colKey${i}`,
+                        colSpan: x,
+                        rowSpan: j === colAttrs.length - 1 && rowAttrs.length !== 0 ? 2 : 1
+                      }
+                    }, this.getItemValue(c, colKey[j]))
+                  }),
+                  j === 0 && this.rowTotal ? h('th', {
+                    staticClass: ['pvtTotalLabel'],
+                    attrs: {
+                      rowSpan: colAttrs.length + (rowAttrs.length === 0 ? 0 : 1)
+                    }
+                  }, this.locales['Totals'] ? this.locales['Totals'] : 'Totals') : undefined
+                ])
             }),
 
             rowAttrs.length !== 0 ? h('tr',
@@ -239,44 +239,44 @@ function makeRenderer (opts = {}) {
                   key: `rowKeyRow${i}`
                 }
               },
-              [
-                rowKey.map((txt, j) => {
-                  const x = this.spanSize(rowKeys, i, j)
-                  if (x === -1) {
-                    return null
-                  }
-                  return h('th', {
-                    staticClass: ['pvtRowLabel'],
-                    attrs: {
-                      key: `rowKeyLabel${i}-${j}`,
-                      rowSpan: x,
-                      colSpan: j === rowAttrs.length - 1 && colAttrs.length !== 0 ? 2 : 1
+                [
+                  rowKey.map((txt, j) => {
+                    const x = this.spanSize(rowKeys, i, j)
+                    if (x === -1) {
+                      return null
                     }
-                  }, this.getItemValue(rowAttrs[j], txt))
-                }),
+                    return h('th', {
+                      staticClass: ['pvtRowLabel'],
+                      attrs: {
+                        key: `rowKeyLabel${i}-${j}`,
+                        rowSpan: x,
+                        colSpan: j === rowAttrs.length - 1 && colAttrs.length !== 0 ? 2 : 1
+                      }
+                    }, this.getItemValue(rowAttrs[j], txt))
+                  }),
 
-                colKeys.map((colKey, j) => {
-                  const aggregator = pivotData.getAggregator(rowKey, colKey)
-                  return h('td', {
-                    staticClass: ['pvVal'],
-                    style: valueCellColors(rowKey, colKey, aggregator.value()),
-                    attrs: {
-                      key: `pvtVal${i}-${j}`
-                    },
+                  colKeys.map((colKey, j) => {
+                    const aggregator = pivotData.getAggregator(rowKey, colKey)
+                    return h('td', {
+                      staticClass: ['pvVal'],
+                      style: valueCellColors(rowKey, colKey, aggregator.value()),
+                      attrs: {
+                        key: `pvtVal${i}-${j}`
+                      },
+                      on: getClickHandler ? {
+                        click: getClickHandler(aggregator.value(), rowKey, colKey)
+                      } : {}
+                    }, aggregator.format(aggregator.value()))
+                  }),
+
+                  this.rowTotal ? h('td', {
+                    staticClass: ['pvtTotal'],
+                    style: colTotalColors(totalAggregator.value()),
                     on: getClickHandler ? {
-                      click: getClickHandler(aggregator.value(), rowKey, colKey)
+                      click: getClickHandler(totalAggregator.value(), rowKey, [null])
                     } : {}
-                  }, aggregator.format(aggregator.value()))
-                }),
-
-                this.rowTotal ? h('td', {
-                  staticClass: ['pvtTotal'],
-                  style: colTotalColors(totalAggregator.value()),
-                  on: getClickHandler ? {
-                    click: getClickHandler(totalAggregator.value(), rowKey, [null])
-                  } : {}
-                }, totalAggregator.format(totalAggregator.value())) : undefined
-              ])
+                  }, totalAggregator.format(totalAggregator.value())) : undefined
+                ])
             }),
 
             h('tr',
@@ -321,7 +321,7 @@ function makeRenderer (opts = {}) {
 const TSVExportRenderer = {
   name: 'tsv-export-renderers',
   mixins: [defaultProps],
-  render (h) {
+  render(h) {
     const pivotData = new PivotData(this.$props)
     const rowKeys = pivotData.getRowKeys()
     const colKeys = pivotData.getColKeys()
